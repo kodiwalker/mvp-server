@@ -1,0 +1,25 @@
+{
+  "name": "travant-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/translate": "^7.2.1",
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "countries-and-timezones": "^3.4.1",
+    "countries-list": "^2.6.1",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.22"
+  }
+}

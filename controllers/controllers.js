@@ -5,6 +5,7 @@ const axios = require('axios');
 let lastTranslatedText;
 const countries = require('countries-list');
 const countryTimezones = require('countries-and-timezones');
+const moment = require('moment-timezone');
 
 const countryMappings = {};
 
@@ -39,7 +40,7 @@ exports.getTime = async (req, res) => {
 
     const unixTime = response.data.unixtime;
     const utcOffsetHours = parseInt(response.data.utc_offset);
-    const localTime = new Date((unixTime + utcOffsetHours * 3600) * 1000);
+    const localTime = moment.unix(unixTime).utcOffset(utcOffsetHours / 60).tz(timezone).format('YYYY-MM-DDTHH:mm:ss');
 
     return localTime;
   }

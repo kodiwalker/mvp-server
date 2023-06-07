@@ -76,4 +76,22 @@ exports.translate = async (req, res) => {
   }
 }
 
+exports.convert = async (req, res) => {
+  const { home, away } = req.body;
+  // home = 'USD';
+  // away = 'MXN';
+
+  try {
+    const [homeRateData, awayRateData] = await Promise.all([
+      axios.get(`https://v6.exchangerate-api.com/v6/44a819715fd986bd0cf9ad89/enriched/${home}/${away}`).then(res => res.data),
+      axios.get(`https://v6.exchangerate-api.com/v6/44a819715fd986bd0cf9ad89/enriched/${away}/${home}`).then(res => res.data)
+    ]);
+
+    res.json({ homeRateData, awayRateData });
+  } catch (e) {
+    console.error('Failed to get conversion rates:', e)
+    res.status(500).json({ error: 'Failed to get conversion rates...' })
+  }
+}
+
 module.exports = exports;

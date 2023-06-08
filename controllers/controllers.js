@@ -13,8 +13,8 @@ for (const countryCode in countries.countries) {
   const country = countries.countries[countryCode];
 
   // Select the first language and currency
-  const firstLanguage = Object.keys(country.languages)[0];
-  const currency = country.currency;
+  const firstLanguage = country.languages[0]
+  const currency = country.currency.length > 3 ? country.currency.split(',')[0] : country.currency;
 
   // Get all timezones for this country
   const timezones = countryTimezones.getTimezonesForCountry(countryCode);
@@ -33,17 +33,16 @@ exports.getCountries = async (req, res) => {
 
 exports.getTime = async (req, res) => {
   const { home, away } = req.body;
-  // home or away should look like 'Country/TimeZone'
-
+  console.log('-----____---______---', home, away)
   async function getLocalTime(timezone) {
     const response = await axios.get(`http://worldtimeapi.org/api/timezone/${timezone}`);
 
     const unixTime = response.data.unixtime;
-    const utcOffsetHours = parseInt(response.data.utc_offset);
-    const localTime = moment.unix(unixTime).utcOffset(utcOffsetHours / 60).tz(timezone).format('YYYY-MM-DDTHH:mm:ss');
+    const localTime = moment.unix(unixTime).tz(timezone).format('YYYY-MM-DDTHH:mm:ss');
 
     return localTime;
   }
+
 
   try {
     const homeTime = await getLocalTime(home);
@@ -51,14 +50,13 @@ exports.getTime = async (req, res) => {
 
     res.json({ homeTime, awayTime });
   } catch (e) {
-    console.error('Failed to get times:', e);
+    console.error('Failed to get times:', e.error);
     res.status(500).json({ error: 'Failed to get times.' });
   }
 }
 
 exports.translate = async (req, res) => {
   const { text, target } = req.body;
-
   if (text.trim() === '' || text === lastTranslatedText || text.trim() === lastTranslatedText) {
     lastTranslatedText = text;
     res.sendStatus(400);
@@ -78,8 +76,6 @@ exports.translate = async (req, res) => {
 
 exports.convert = async (req, res) => {
   const { home, away } = req.body;
-  // home = 'USD';
-  // away = 'MXN';
 
   try {
     const [homeRateData, awayRateData] = await Promise.all([

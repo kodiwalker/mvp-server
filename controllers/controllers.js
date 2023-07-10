@@ -28,8 +28,8 @@ exports.getCountries = async (req, res) => {
 }
 
 exports.getTime = [
-  body('home').trim().escape(),
-  body('away').trim().escape(),
+  body('home'),
+  body('away'),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -37,6 +37,7 @@ exports.getTime = [
     }
 
     const { home, away } = req.body;
+    console.log('@#%$@$@#', home, away)
     async function getLocalTime(timezone) {
       const response = await axios.get(`http://worldtimeapi.org/api/timezone/${timezone}`);
       const unixTime = response.data.unixtime;
@@ -49,7 +50,7 @@ exports.getTime = [
       const awayTime = await getLocalTime(away);
       res.json({ homeTime, awayTime });
     } catch (e) {
-      console.error('Failed to get times:', e.error);
+      console.error('Failed to get times:', e.data);
       res.status(500).json({ error: 'Failed to get times.' });
     }
   }
@@ -57,7 +58,7 @@ exports.getTime = [
 
 exports.translate = [
   body('text').trim().escape(),
-  body('target').trim().escape(),
+  body('target'),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

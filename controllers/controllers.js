@@ -37,7 +37,7 @@ exports.getTime = [
     }
 
     const { home, away } = req.body;
-    console.log('@#%$@$@#', home, away)
+    console.log('Timezones changed:', home, '<->', away);
     async function getLocalTime(timezone) {
       const response = await axios.get(`http://worldtimeapi.org/api/timezone/${timezone}`);
       const unixTime = response.data.unixtime;
@@ -66,13 +66,12 @@ exports.translate = [
     }
 
     const { text, target } = req.body;
-    if (text.trim() === '' || text === lastTranslatedText || text.trim() === lastTranslatedText) {
-      lastTranslatedText = text;
+    console.log('Translating...', text);
+    if (text.trim() === '') {
       res.sendStatus(400);
       return;
     }
 
-    lastTranslatedText = text;
     try {
       const [translation] = await translate.translate(text, target);
       res.json(translation);
@@ -93,6 +92,7 @@ exports.convert = [
     }
 
     const { home, away } = req.body;
+    console.log('Countries changed:', home, '<->', away);
     try {
       const [homeRateData, awayRateData] = await Promise.all([
         axios.get(`https://v6.exchangerate-api.com/v6/44a819715fd986bd0cf9ad89/enriched/${home}/${away}`).then(res => res.data),
